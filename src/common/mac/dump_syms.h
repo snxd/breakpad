@@ -65,8 +65,10 @@ class DumpSymbols {
         object_files_(),
         selected_object_file_(),
         selected_object_name_(),
-        enable_multiple_(enable_multiple) {}
-  ~DumpSymbols() = default;
+        enable_multiple_(enable_multiple),
+        report_warnings_(true) {}
+  ~DumpSymbols() {
+  }
 
   // Prepare to read debugging information from |filename|. |filename| may be
   // the name of a fat file, a Mach-O file, or a dSYM bundle containing either
@@ -102,6 +104,9 @@ class DumpSymbols {
   // object file, then the dumper will dump the object file whose
   // architecture matches that of this dumper program.
   bool SetArchitecture(const std::string& arch_name);
+
+  // Set whether or not to report DWARF warnings
+  void SetReportWarnings(bool report_warnings);
 
   // Return a pointer to an array of SuperFatArch structures describing the
   // object files contained in this dumper's file. Set *|count| to the number
@@ -204,6 +209,9 @@ class DumpSymbols {
   // See: https://crbug.com/google-breakpad/751 and docs at 
   // docs/symbol_files.md#records-3
   bool enable_multiple_;
+
+  // Whether or not to report warnings
+  bool report_warnings_;
 };
 
 }  // namespace google_breakpad
