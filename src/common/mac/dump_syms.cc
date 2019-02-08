@@ -239,6 +239,11 @@ bool DumpSymbols::SetArchitecture(const std::string& arch_name) {
   return arch_set;
 }
 
+void DumpSymbols::SetReportWarnings(bool report_warnings)
+{
+    report_warnings_ = report_warnings;
+}
+
 SuperFatArch* DumpSymbols::FindBestMatchForArchitecture(
     cpu_type_t cpu_type, cpu_subtype_t cpu_subtype) {
   // Check if all the object files can be converted to struct fat_arch.
@@ -494,10 +499,16 @@ void DumpSymbols::ReadDwarf(google_breakpad::Module* module,
   for (uint64_t offset = 0; offset < debug_info_length;) {
     // Make a handler for the root DIE that populates MODULE with the
     // debug info.
-    DwarfCUToModule::WarningReporter reporter(selected_object_name_,
-                                              offset);
+    DwarfCUToModule::WarningReporter *reporter = NULL;
+    if (report_warnings_) {
+        reporter = new DwarfCUToModule::WarningReporter(
+            selected_object_name_, offset);
+    } else {
+        reporter = new DwarfCUToModule::NullWarningReporter(
+            selected_object_name_, offset);
+    }
     DwarfCUToModule root_handler(&file_context, &line_to_module,
-                                 &ranges_handler, &reporter,
+                                 &ranges_handler, reporter,
                                  symbol_data_ & INLINES);
     // Make a Dwarf2Handler that drives our DIEHandler.
     DIEDispatcher die_dispatcher(&root_handler);
@@ -509,6 +520,7 @@ void DumpSymbols::ReadDwarf(google_breakpad::Module* module,
                                                &die_dispatcher);
     // Process the entire compilation unit; get the offset of the next.
     offset += dwarf_reader.Start();
+    delete reporter;
   }
 }
 
