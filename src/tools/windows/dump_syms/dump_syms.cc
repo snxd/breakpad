@@ -35,6 +35,7 @@
 
 #include <memory>
 #include <string>
+#include <memory>
 
 #include "common/windows/pdb_source_line_writer.h"
 #include "common/windows/pe_source_line_writer.h"
