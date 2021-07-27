@@ -165,9 +165,27 @@ macro(breakpad_set_project_properties project)
         target_compile_definitions(${project} PRIVATE
             _WIN32
             _CRT_SECURE_NO_WARNINGS)
-        target_compile_options(${project} PRIVATE
-            $<$<CONFIG:Debug>:/MTd>
-            $<$<CONFIG:Release>:/MT>)
+
+        # Set appropiate version of msvc runtime library
+        if(MSVC AND CMAKE_VERSION VERSION_LESS "3.15") # < 3.15
+            if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+                target_compile_options(${target} PRIVATE
+                    /MD$<$<CONFIG:Debug>:d>)
+            else()
+                target_compile_options(${target} PRIVATE
+                    /MT$<$<CONFIG:Debug>:d>)
+            endif()
+        else()
+            if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+                set_target_properties(${target} PROPERTIES
+                    MSVC_RUNTIME_LIBRARY
+                        MultiThreaded$<$<CONFIG:Debug>:Debug>DLL)
+            else()
+                set_target_properties(${target} PROPERTIES
+                    MSVC_RUNTIME_LIBRARY
+                        MultiThreaded$<$<CONFIG:Debug>:Debug>)
+            endif()
+        endif()
     endif()
 endmacro()
 
