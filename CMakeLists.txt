@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 option(BKPAD_DUMP_SYMS "Builds tool for producing cross-platform .sym files" ON)
 # dump_syms - Tool for producing cross-platform .sym files from a binary with debug info
