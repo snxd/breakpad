@@ -284,7 +284,7 @@ if(BKPAD_DUMP_SYMS)
                 set(DIA_SDK_GUID_LIB ${DIA_SDK_GUID_LIB64})
             endif()
         endif()
-        set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB})
+        set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB} dbghelp)
     else()
         set(DUMPSYMS_SRCS
             ${BREAKPAD_SRC_DIR}/common/dwarf/bytereader.cc
