@@ -226,7 +226,28 @@ target_link_libraries(breakpad breakpad_common)
 
 if(BKPAD_DUMP_SYMS)
     if(WIN32)
-        set(DEBUG_ACCESS_SDK_DIR "$ENV{VSINSTALLDIR}/DIA SDK")
+        # Use vswhere tool to determine the install directory of Visual Studio
+        set(PROGRAMFILES86 "ProgramFiles(x86)")
+        find_program(VSWHERE_TOOL
+            NAMES vswhere
+            PATHS "$ENV{${PROGRAMFILES86}}/Microsoft Visual Studio/Installer")
+
+        if(VSWHERE_TOOL-NOTFOUND)
+            message(WARNING "Unable to find Visual Studio where tool")
+        else()
+            execute_process(COMMAND "${VSWHERE_TOOL}" -latest -property installationPath
+                OUTPUT_VARIABLE VSINSTALLDIR
+                RESULT_VARIABLE VSWHERE_EXITCODE
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+        endif()
+
+        # DIA SDK is not found in build tools distribution
+        set(DEBUG_ACCESS_SDK_DIR "${VSINSTALLDIR}/DIA SDK")
+
+        # Look for DIA SDK using known environment variables
+        if (NOT EXISTS "${DEBUG_ACCESS_SDK_DIR}")
+            set(DEBUG_ACCESS_SDK_DIR "$ENV{VSINSTALLDIR}/DIA SDK")
+        endif()
         if (NOT EXISTS "${DEBUG_ACCESS_SDK_DIR}")
             set(DEBUG_ACCESS_SDK_DIR "$ENV{VS160COMNTOOLS}/../../DIA SDK")
         endif()
@@ -241,9 +262,8 @@ if(BKPAD_DUMP_SYMS)
         endif()
         if (NOT EXISTS "${DEBUG_ACCESS_SDK_DIR}")
             # The Debug Access SDK is required to build the dump_syms tool.
-            # It ships with the pro versions of Visual Studio 2008 and 2010 but not
-            # the express versions. It is available separately as part of the Windows SDK
-            # however. Please check that VSINSTALLDIR environment variable is set.
+            # It ships with the certain versions/editions of Visual Studio or can be
+            # downloaded separately as part of the Windows SDK.
             message(FATAL_ERROR "Debug Access SDK not found in ${DEBUG_ACCESS_SDK_DIR}.")
         endif()
 
