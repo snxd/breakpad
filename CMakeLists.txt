@@ -234,10 +234,12 @@ if(BKPAD_DUMP_SYMS)
             set(DEBUG_ACCESS_SDK_DIR "$ENV{VS120COMNTOOLS}/../../DIA SDK")
         endif()
         if (NOT EXISTS "${DEBUG_ACCESS_SDK_DIR}")
-            # The Debug Access SDK is required to build the dump_syms tool.
+            # The Debug Interface Access SDK is required to build the dump_syms tool.
             # It ships with the certain versions/editions of Visual Studio or can be
             # downloaded separately as part of the Windows SDK.
-            message(FATAL_ERROR "Debug Access SDK not found in ${DEBUG_ACCESS_SDK_DIR}.")
+            message(FATAL_ERROR "DIA SDK not found in ${DEBUG_ACCESS_SDK_DIR}.")
+        else()
+            message(STATUS "DIA SDK directory: ${DEBUG_ACCESS_SDK_DIR}")
         endif()
 
         include_directories(${DEBUG_ACCESS_SDK_DIR}/include)
@@ -259,8 +261,14 @@ if(BKPAD_DUMP_SYMS)
             set(DEBUG_ACCESS_SDK_BIN_DIR ${DEBUG_ACCESS_SDK_DIR}/bin)
         endif()
 
+        message(STATUS "DIA SDK library directory: ${DEBUG_ACCESS_SDK_LIB_DIR}")
+        message(STATUS "DIA SDK binary directory: ${DEBUG_ACCESS_SDK_BIN_DIR}")
+
         find_library(DIA_SDK_GUID_LIB diaguids PATHS ${DEBUG_ACCESS_SDK_LIB_DIR})
+        message(STATUS "DIA SDK guid library: ${DIA_SDK_GUID_LIB}")
+
         find_file(DIA_SDK_140_DLL msdia140.dll PATHS ${DEBUG_ACCESS_SDK_BIN_DIR})
+        message(STATUS "DIA SDK library: ${DIA_SDK_140_DLL}")
 
         set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB} dbghelp)
     else()
