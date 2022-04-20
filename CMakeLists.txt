@@ -191,8 +191,7 @@ endmacro()
 
 project(breakpad CXX)
 
-add_library(breakpad_common STATIC
-    ${BREAKPADCOMMON_LIB_SRCS} ${BREAKPADCOMMON_LIB_HEADERS})
+add_library(breakpad_common STATIC ${BREAKPADCOMMON_LIB_SRCS} ${BREAKPADCOMMON_LIB_HEADERS})
 breakpad_set_project_properties(breakpad_common)
 
 if(WIN32)
@@ -213,8 +212,7 @@ endif()
 
 target_link_libraries(breakpad_common ${BREAKPADCOMMON_LIBS})
 
-add_library(breakpad
-    ${BREAKPAD_LIB_SRCS} ${BREAKPAD_LIB_HEADERS})
+add_library(breakpad ${BREAKPAD_LIB_SRCS} ${BREAKPAD_LIB_HEADERS})
 breakpad_set_project_properties(breakpad)
 if(APPLE)
     if(BUILD_SHARED_LIBS)
@@ -333,8 +331,7 @@ if(BKPAD_DUMP_SYMS)
         endif()
     endif()
 
-    add_executable(dump_syms
-        ${DUMPSYMS_SRCS} ${DUMPSYMS_HEADERS})
+    add_executable(dump_syms ${DUMPSYMS_SRCS} ${DUMPSYMS_HEADERS})
     target_link_libraries(dump_syms breakpad_common ${DUMPSYMS_LIBS})
     breakpad_set_project_properties(dump_syms)
 endif()
@@ -371,7 +368,7 @@ if(BKPAD_MINIDUMP)
     breakpad_set_project_properties(disasm)
 
     set(PROCESSOR_SRC_DIR ${BREAKPAD_SRC_DIR}/processor)
-    set(MINIDUMP_STACKWALK_SRCS
+    set(PROCESSOR_COMMON_SRCS
         ${PROCESSOR_SRC_DIR}/basic_code_modules.cc
         ${PROCESSOR_SRC_DIR}/basic_source_line_resolver.cc
         ${PROCESSOR_SRC_DIR}/call_stack.cc
@@ -384,9 +381,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/exploitability_win.cc
         ${PROCESSOR_SRC_DIR}/exploitability_linux.cc
         ${PROCESSOR_SRC_DIR}/logging.cc
-        ${PROCESSOR_SRC_DIR}/minidump.cc
         ${PROCESSOR_SRC_DIR}/minidump_processor.cc
-        ${PROCESSOR_SRC_DIR}/minidump_stackwalk.cc
         ${PROCESSOR_SRC_DIR}/pathname_stripper.cc
         ${PROCESSOR_SRC_DIR}/process_state.cc
         ${PROCESSOR_SRC_DIR}/proc_maps_linux.cc
@@ -406,7 +401,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/source_line_resolver_base.cc
         ${PROCESSOR_SRC_DIR}/symbolic_constants_win.cc
         ${PROCESSOR_SRC_DIR}/tokenize.cc)
-    set(MINIDUMP_STACKWALK_HEADERS
+    set(PROCESSOR_COMMON_HEADERS
         ${PROCESSOR_SRC_DIR}/basic_code_modules.h
         ${PROCESSOR_SRC_DIR}/cfi_frame_info.h
         ${PROCESSOR_SRC_DIR}/disassembler_x86.h
@@ -426,6 +421,13 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.h
         ${PROCESSOR_SRC_DIR}/tokenize.h)
 
+    add_library(processor_common ${PROCESSOR_COMMON_SRCS} ${PROCESSOR_COMMON_HEADERS})
+    breakpad_set_project_properties(processor_common)
+
+    set(MINIDUMP_STACKWALK_SRCS
+        ${PROCESSOR_SRC_DIR}/minidump.cc
+        ${PROCESSOR_SRC_DIR}/minidump_stackwalk.cc)
+
     if(WIN32)
         include_directories(${BREAKPAD_SRC_DIR}/third_party/getopt)
         list(APPEND MINIDUMP_STACKWALK_SRCS
@@ -434,9 +436,7 @@ if(BKPAD_MINIDUMP)
             ${BREAKPAD_SRC_DIR}/third_party/getopt/getopt.h)
     endif()
 
-    add_executable(minidump_stackwalk
-        ${MINIDUMP_STACKWALK_SRCS} ${MINIDUMP_STACKWALK_HEADERS})
+    add_executable(minidump_stackwalk ${MINIDUMP_STACKWALK_SRCS} ${MINIDUMP_STACKWALK_HEADERS})
     breakpad_set_project_properties(minidump_stackwalk)
-    target_link_libraries(minidump_stackwalk breakpad_common)
-    target_link_libraries(minidump_stackwalk disasm)
+    target_link_libraries(minidump_stackwalk breakpad_common processor_common disasm)
 endif()
