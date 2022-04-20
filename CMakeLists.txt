@@ -275,13 +275,18 @@ if(BKPAD_DUMP_SYMS)
         set(DUMPSYMS_HEADERS
             ${BREAKPAD_SRC_DIR}/common/windows/pdb_source_line_writer.h)
 
-        find_library(DIA_SDK_GUID_LIB diaguids PATHS ${DEBUG_ACCESS_SDK_DIR}/lib)
+
         if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-            find_library(DIA_SDK_GUID_LIB64 diaguids PATHS ${DEBUG_ACCESS_SDK_DIR}/lib/amd64)
-            if(DIA_SDK_GUID_LIB64)
-                set(DIA_SDK_GUID_LIB ${DIA_SDK_GUID_LIB64})
-            endif()
+            set(DEBUG_ACCESS_SDK_LIB_DIR ${DEBUG_ACCESS_SDK_DIR}/lib/amd64)
+            set(DEBUG_ACCESS_SDK_BIN_DIR ${DEBUG_ACCESS_SDK_DIR}/bin/amd64)
+        else()
+            set(DEBUG_ACCESS_SDK_LIB_DIR ${DEBUG_ACCESS_SDK_DIR}/lib)
+            set(DEBUG_ACCESS_SDK_BIN_DIR ${DEBUG_ACCESS_SDK_DIR}/bin)
         endif()
+
+        find_library(DIA_SDK_GUID_LIB diaguids PATHS ${DEBUG_ACCESS_SDK_LIB_DIR})
+        find_file(DIA_SDK_140_DLL msdia140.dll PATHS ${DEBUG_ACCESS_SDK_BIN_DIR})
+
         set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB} dbghelp)
     else()
         set(DUMPSYMS_SRCS
@@ -334,6 +339,13 @@ if(BKPAD_DUMP_SYMS)
     add_executable(dump_syms ${DUMPSYMS_SRCS} ${DUMPSYMS_HEADERS})
     target_link_libraries(dump_syms breakpad_common ${DUMPSYMS_LIBS})
     breakpad_set_project_properties(dump_syms)
+    if(WIN32 AND DIA_SDK_140_DLL)
+        set(TARGET_DIA_SDK_140_DLL $<TARGET_FILE_DIR:dump_syms>/msdia140.dll)
+        add_custom_command(TARGET dump_syms POST_BUILD
+            COMMAND "${CMAKE_COMMAND}"
+                -E copy "${DIA_SDK_140_DLL}" "${TARGET_DIA_SDK_140_DLL}"
+            COMMENT "Copying msdia140.dll to output directory")
+    endif()
 endif()
 
 if(BKPAD_MINIDUMP)
