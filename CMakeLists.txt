@@ -384,7 +384,7 @@ if(BKPAD_MINIDUMP)
         ${LIBDISASM_DIR}/x86_operand_list.c)
 
     enable_language(C)
-    add_library(disasm ${LIBDISASM_SRCS})
+    add_library(disasm STATIC ${LIBDISASM_SRCS})
     breakpad_set_project_properties(disasm)
 
     set(PROCESSOR_SRC_DIR ${BREAKPAD_SRC_DIR}/processor)
@@ -441,7 +441,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.h
         ${PROCESSOR_SRC_DIR}/tokenize.h)
 
-    add_library(processor_common ${PROCESSOR_COMMON_SRCS} ${PROCESSOR_COMMON_HEADERS})
+    add_library(processor_common STATIC ${PROCESSOR_COMMON_SRCS} ${PROCESSOR_COMMON_HEADERS})
     breakpad_set_project_properties(processor_common)
 
     set(MINIDUMP_STACKWALK_SRCS
