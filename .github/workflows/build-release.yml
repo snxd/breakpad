@@ -68,7 +68,7 @@ jobs:
     - name: Package release (macOS/Linux)
       shell: bash
       if: runner.os != 'Windows'
-      run: zip ../breakpad-utilities-${{ matrix.short-name }}.zip minidump* dump_sym*
+      run: 7z a -tzip ../breakpad-utilities-${{ matrix.short-name }}.zip minidump* dump_sym*
       working-directory: build
 
     - name: Package release (Windows)
