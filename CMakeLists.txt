@@ -356,6 +356,23 @@ if(BKPAD_DUMP_SYMS)
     endif()
 endif()
 
+if(UNIX)
+    include(FetchContent)
+
+    message(STATUS "Retrieving linux-syscall-support repository")
+
+    FetchContent_Declare(lss
+        GIT_REPOSITORY https://chromium.googlesource.com/linux-syscall-support
+        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/third_party/lss)
+    FetchContent_MakeAvailable(lss)
+
+    target_include_directories(breakpad_common PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(breakpad PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    if(BKPAD_DUMP_SYMS)
+        target_include_directories(dump_syms PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+endif()
+
 if(BKPAD_MINIDUMP)
     if(WIN32)
         include_directories(${BREAKPAD_SRC_DIR}/third_party/windows/include)
