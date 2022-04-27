@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
+include(FetchContent)
+include(CheckFunctionExists)
+
 option(BKPAD_DUMP_SYMS "Builds tool for producing cross-platform .sym files" ON)
 # dump_syms - Tool for producing cross-platform .sym files from a binary with debug info
 
@@ -96,6 +99,11 @@ else()
             ${CLIENT_SRC_DIR}/handler/minidump_generator.h)
     elseif(UNIX)
         add_definitions(-DHAVE_A_OUT_H)
+
+        set(BREAKPADCOMMON_LIB_GETCONTEXT_SRCS
+            ${BREAKPAD_SRC_DIR}/common/linux/breakpad_getcontext.S)
+        set(BREAKPADCOMMON_LIB_GETCONTEXT_HEADERS
+            ${BREAKPAD_SRC_DIR}/common/linux/breakpad_getcontext.h)
 
         list(APPEND BREAKPADCOMMON_LIB_SRCS
             ${BREAKPAD_SRC_DIR}/common/linux/crc32.cc
@@ -253,7 +261,6 @@ if(BKPAD_DUMP_SYMS)
         set(DUMPSYMS_HEADERS
             ${BREAKPAD_SRC_DIR}/common/windows/pdb_source_line_writer.h)
 
-
         if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
             set(DEBUG_ACCESS_SDK_LIB_DIR ${DEBUG_ACCESS_SDK_DIR}/lib/amd64)
             set(DEBUG_ACCESS_SDK_BIN_DIR ${DEBUG_ACCESS_SDK_DIR}/bin/amd64)
@@ -333,7 +340,16 @@ if(BKPAD_DUMP_SYMS)
 endif()
 
 if(UNIX)
-    include(FetchContent)
+    check_function_exists(getcontext HAVE_GETCONTEXT)
+
+    if(HAVE_GETCONTEXT)
+        target_compile_definitions(breakpad PRIVATE HAVE_GETCONTEXT)
+        target_compile_definitions(breakpad_common PRIVATE HAVE_GETCONTEXT)
+    else()
+        target_sources(breakpad_common PRIVATE
+            ${BREAKPADCOMMON_LIB_GETCONTEXT_SRCS}
+            ${BREAKPADCOMMON_LIB_GETCONTEXT_HEADERS})
+    endif()
 
     message(STATUS "Retrieving linux-syscall-support repository")
 
