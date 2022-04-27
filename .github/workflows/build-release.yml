@@ -32,10 +32,6 @@ jobs:
       if: runner.os == 'Linux'
       run: sudo apt-get install -y ninja-build
 
-    - name: Download Linux Syscall Support
-      if: runner.os == 'Linux'
-      run: git clone https://chromium.googlesource.com/linux-syscall-support src/third_party/lss
-
     - name: Compiling source code
       run: |
         cmake -S . -B build ${{ matrix.cmake-args }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
