@@ -189,6 +189,7 @@ target_link_libraries(breakpad_common ${BREAKPADCOMMON_LIBS})
 
 add_library(breakpad ${BREAKPAD_LIB_SRCS} ${BREAKPAD_LIB_HEADERS})
 breakpad_set_project_properties(breakpad)
+target_include_directories(breakpad PUBLIC $<BUILD_INTERFACE:${BREAKPAD_SRC_DIR}>)
 if(APPLE)
     if(BUILD_SHARED_LIBS)
         set_target_properties(breakpad PROPERTIES
@@ -342,7 +343,8 @@ if(UNIX)
     FetchContent_MakeAvailable(lss)
 
     target_include_directories(breakpad_common PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-    target_include_directories(breakpad PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(breakpad PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
     if(BKPAD_DUMP_SYMS)
         target_include_directories(dump_syms PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
     endif()
