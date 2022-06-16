@@ -22,7 +22,7 @@ jobs:
           - name: Build - Windows
             short-name: win64
             runs-on: windows-latest
-            cmake-args: -DCMAKE_GENERATOR_PLATFORM=x64
+            cmake-args: -D CMAKE_GENERATOR_PLATFORM=x64
 
     steps:
     - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
 
     - name: Compiling source code
       run: |
-        cmake -S . -B build ${{ matrix.cmake-args }} -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
+        cmake -S . -B build ${{ matrix.cmake-args }} -D BUILD_SHARED_LIBS=OFF -D CMAKE_BUILD_TYPE=MinSizeRel
         cmake --build build --config MinSizeRel
       env:
         CC: ${{ matrix.compiler }}
