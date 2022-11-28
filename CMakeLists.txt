@@ -329,6 +329,21 @@ if(BKPAD_DUMP_SYMS)
 
     add_executable(dump_syms ${DUMPSYMS_SRCS} ${DUMPSYMS_HEADERS})
     target_link_libraries(dump_syms breakpad_common ${DUMPSYMS_LIBS})
+
+    if(UNIX AND NOT APPLE)
+        # Link against zlib for compressed section header support
+        if(NOT TARGET ZLIB::ZLIB)
+            if(CMAKE_VERSION VERSION_LESS "3.24")
+                set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+            else()
+                set(ZLIB_USE_STATIC_LIBS ON)
+            endif()
+
+            find_package(ZLIB REQUIRED)
+        endif()
+        target_link_libraries(dump_syms ZLIB::ZLIB)
+    endif()
+
     breakpad_set_project_properties(dump_syms)
     if(WIN32 AND DIA_SDK_140_DLL)
         set(TARGET_DIA_SDK_140_DLL $<TARGET_FILE_DIR:dump_syms>/msdia140.dll)
