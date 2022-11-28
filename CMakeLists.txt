@@ -429,6 +429,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/call_stack.cc
         ${PROCESSOR_SRC_DIR}/cfi_frame_info.cc
         ${PROCESSOR_SRC_DIR}/convert_old_arm64_context.cc
+        ${PROCESSOR_SRC_DIR}/disassembler_objdump.cc
         ${PROCESSOR_SRC_DIR}/disassembler_x86.cc
         ${PROCESSOR_SRC_DIR}/dump_context.cc
         ${PROCESSOR_SRC_DIR}/dump_object.cc
@@ -451,6 +452,8 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_mips.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc64.cc
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv.cc
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv64.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_sparc.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.cc
         ${PROCESSOR_SRC_DIR}/source_line_resolver_base.cc
@@ -459,6 +462,7 @@ if(BKPAD_MINIDUMP)
     set(PROCESSOR_COMMON_HEADERS
         ${PROCESSOR_SRC_DIR}/basic_code_modules.h
         ${PROCESSOR_SRC_DIR}/cfi_frame_info.h
+        ${PROCESSOR_SRC_DIR}/disassembler_objdump.h
         ${PROCESSOR_SRC_DIR}/disassembler_x86.h
         ${PROCESSOR_SRC_DIR}/exploitability_win.h
         ${PROCESSOR_SRC_DIR}/exploitability_linux.h
@@ -472,6 +476,8 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_mips.h
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc.h
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc64.h
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv.h
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv64.h
         ${PROCESSOR_SRC_DIR}/stackwalker_sparc.h
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.h
         ${PROCESSOR_SRC_DIR}/tokenize.h)
