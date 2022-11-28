@@ -84,7 +84,7 @@ ScopedTmpFile::~ScopedTmpFile() {
 }
 
 bool ScopedTmpFile::Create() {
-  fd_ = mkstemp(path_.data());
+  fd_ = mkstemp((char*)path_.data());
   if (fd_ < 0) {
     unlink(path_.c_str());
     fd_ = 0;
