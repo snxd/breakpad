@@ -16,7 +16,7 @@ include_directories(${BREAKPAD_SRC_DIR}
     ${BREAKPAD_SRC_DIR}/common)
 
 set(BREAKPADCOMMON_LIB_SRCS
-    ${BREAKPAD_SRC_DIR}/common/convert_UTF.c
+    ${BREAKPAD_SRC_DIR}/common/convert_UTF.cc
     ${BREAKPAD_SRC_DIR}/common/md5.cc
     ${BREAKPAD_SRC_DIR}/common/string_conversion.cc)
 set(BREAKPADCOMMON_LIB_HEADERS
@@ -31,11 +31,15 @@ if(WIN32)
                     -D_UNICODE)
 
     list(APPEND BREAKPADCOMMON_LIB_SRCS
-        ${BREAKPAD_SRC_DIR}/common/windows/path_helper.cc
         ${BREAKPAD_SRC_DIR}/common/windows/guid_string.cc
+        ${BREAKPAD_SRC_DIR}/common/windows/path_helper.cc
+        ${BREAKPAD_SRC_DIR}/common/windows/pe_source_line_writer.cc
+        ${BREAKPAD_SRC_DIR}/common/windows/pe_util.cc
         ${BREAKPAD_SRC_DIR}/common/windows/string_utils.cc)
     list(APPEND BREAKPADCOMMON_LIB_HEADERS
         ${BREAKPAD_SRC_DIR}/common/windows/guid_string.h
+        ${BREAKPAD_SRC_DIR}/common/windows/pe_source_line_writer.h
+        ${BREAKPAD_SRC_DIR}/common/windows/pe_util.h
         ${BREAKPAD_SRC_DIR}/common/windows/string_utils-inl.h)
 
     set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/windows)
@@ -136,7 +140,8 @@ else()
             ${CLIENT_SRC_DIR}/microdump_writer/microdump_writer.cc
             ${CLIENT_SRC_DIR}/minidump_writer/linux_dumper.cc
             ${CLIENT_SRC_DIR}/minidump_writer/linux_ptrace_dumper.cc
-            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.cc)
+            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.cc
+            ${CLIENT_SRC_DIR}/minidump_writer/pe_file.cc)
         list(APPEND BREAKPAD_LIB_HEADERS
             ${CLIENT_SRC_DIR}/crash_generation/crash_generation_client.h
             ${CLIENT_SRC_DIR}/dump_writer_common/thread_info.h
@@ -147,7 +152,8 @@ else()
             ${CLIENT_SRC_DIR}/microdump_writer/microdump_writer.h
             ${CLIENT_SRC_DIR}/minidump_writer/linux_dumper.h
             ${CLIENT_SRC_DIR}/minidump_writer/linux_ptrace_dumper.h
-            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.h)
+            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.h
+            ${CLIENT_SRC_DIR}/minidump_writer/pe_file.h)
     endif()
 endif()
 
@@ -419,6 +425,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/call_stack.cc
         ${PROCESSOR_SRC_DIR}/cfi_frame_info.cc
         ${PROCESSOR_SRC_DIR}/convert_old_arm64_context.cc
+        ${PROCESSOR_SRC_DIR}/disassembler_objdump.cc
         ${PROCESSOR_SRC_DIR}/disassembler_x86.cc
         ${PROCESSOR_SRC_DIR}/dump_context.cc
         ${PROCESSOR_SRC_DIR}/dump_object.cc
@@ -441,6 +448,8 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_mips.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc64.cc
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv.cc
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv64.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_sparc.cc
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.cc
         ${PROCESSOR_SRC_DIR}/source_line_resolver_base.cc
@@ -449,6 +458,7 @@ if(BKPAD_MINIDUMP)
     set(PROCESSOR_COMMON_HEADERS
         ${PROCESSOR_SRC_DIR}/basic_code_modules.h
         ${PROCESSOR_SRC_DIR}/cfi_frame_info.h
+        ${PROCESSOR_SRC_DIR}/disassembler_objdump.h
         ${PROCESSOR_SRC_DIR}/disassembler_x86.h
         ${PROCESSOR_SRC_DIR}/exploitability_win.h
         ${PROCESSOR_SRC_DIR}/exploitability_linux.h
@@ -462,6 +472,8 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_mips.h
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc.h
         ${PROCESSOR_SRC_DIR}/stackwalker_ppc64.h
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv.h
+        ${PROCESSOR_SRC_DIR}/stackwalker_riscv64.h
         ${PROCESSOR_SRC_DIR}/stackwalker_sparc.h
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.h
         ${PROCESSOR_SRC_DIR}/tokenize.h)
