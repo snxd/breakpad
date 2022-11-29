@@ -140,7 +140,8 @@ else()
             ${CLIENT_SRC_DIR}/microdump_writer/microdump_writer.cc
             ${CLIENT_SRC_DIR}/minidump_writer/linux_dumper.cc
             ${CLIENT_SRC_DIR}/minidump_writer/linux_ptrace_dumper.cc
-            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.cc)
+            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.cc
+            ${CLIENT_SRC_DIR}/minidump_writer/pe_file.cc)
         list(APPEND BREAKPAD_LIB_HEADERS
             ${CLIENT_SRC_DIR}/crash_generation/crash_generation_client.h
             ${CLIENT_SRC_DIR}/dump_writer_common/thread_info.h
@@ -151,7 +152,8 @@ else()
             ${CLIENT_SRC_DIR}/microdump_writer/microdump_writer.h
             ${CLIENT_SRC_DIR}/minidump_writer/linux_dumper.h
             ${CLIENT_SRC_DIR}/minidump_writer/linux_ptrace_dumper.h
-            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.h)
+            ${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.h
+            ${CLIENT_SRC_DIR}/minidump_writer/pe_file.h)
     endif()
 endif()
 
