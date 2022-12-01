@@ -34,8 +34,6 @@ if(WIN32)
     list(APPEND BREAKPADCOMMON_LIB_HEADERS
         ${BREAKPAD_SRC_DIR}/common/windows/guid_string.h
         ${BREAKPAD_SRC_DIR}/common/windows/string_utils-inl.h)
-    
-    set(BREAKPADCOMMON_LIBS Imagehlp)
 
     set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/windows)
 
@@ -80,16 +78,6 @@ else()
             ${BREAKPAD_SRC_DIR}/common/mac/macho_walker.h
             ${BREAKPAD_SRC_DIR}/common/mac/string_utilities.h)
 
-        find_library(FOUNDATION_LIB Foundation REQUIRED)
-        set(BREAKPADCOMMON_LIBS ${FOUNDATION_LIB})
-        find_library(APPLICATIONSERVICES_LIB ApplicationServices REQUIRED)
-        list(APPEND BREAKPADCOMMON_LIBS ${APPLICATIONSERVICES_LIB})
-
-        if(APPLE AND CMAKE_GENERATOR MATCHES "Xcode")
-            # Xcode 10 or higher uses libc++
-            list(APPEND BREAKPADCOMMON_LIBS "c++")
-        endif()
-
         set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/mac)
 
         list(APPEND BREAKPAD_LIB_SRCS
@@ -127,9 +115,6 @@ else()
             ${BREAKPAD_SRC_DIR}/common/linux/linux_libc_support.h
             ${BREAKPAD_SRC_DIR}/common/linux/memory_mapped_file.h
             ${BREAKPAD_SRC_DIR}/common/linux/safe_readlink.h)
-        
-        find_package(Threads)
-        set(BREAKPADCOMMON_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
         set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/linux)
 
@@ -184,6 +169,23 @@ project(breakpad CXX)
 add_library(breakpad_common STATIC
     ${BREAKPADCOMMON_LIB_SRCS} ${BREAKPADCOMMON_LIB_HEADERS})
 breakpad_set_project_properties(breakpad_common)
+
+if(WIN32)
+    set(BREAKPADCOMMON_LIBS Imagehlp)
+elseif(APPLE)
+    find_library(FOUNDATION_LIBRARY Foundation REQUIRED)
+    set(BREAKPADCOMMON_LIBS ${FOUNDATION_LIBRARY})
+    find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices REQUIRED)
+    list(APPEND BREAKPADCOMMON_LIBS ${APPLICATIONSERVICES_LIBRARY})
+    if(CMAKE_GENERATOR MATCHES "Xcode")
+        # Xcode 10 or higher uses libc++
+        list(APPEND BREAKPADCOMMON_LIBS "c++")
+    endif()
+elseif(UNIX)
+    find_package(Threads)
+    set(BREAKPADCOMMON_LIBS ${CMAKE_THREAD_LIBS_INIT})
+endif()
+
 target_link_libraries(breakpad_common ${BREAKPADCOMMON_LIBS})
 
 add_library(breakpad
