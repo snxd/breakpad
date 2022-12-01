@@ -236,7 +236,7 @@ if(BKPAD_DUMP_SYMS)
             find_library(DIA_SDK_GUID_LIB diaguids PATHS ${DEBUG_ACCESS_SDK_DIR}/lib)
         endif("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 
-        set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB})
+        set(DUMPSYMS_LIBS ${DIA_SDK_GUID_LIB} dbghelp)
     else()
         set(DUMPSYMS_SRCS
             ${BREAKPAD_SRC_DIR}/common/dwarf/bytereader.cc
