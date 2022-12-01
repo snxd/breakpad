@@ -292,6 +292,14 @@ if(BKPAD_DUMP_SYMS)
 endif()
 
 if(BKPAD_MINIDUMP)
+    if(WIN32)
+        include_directories(${BREAKPAD_SRC_DIR}/third_party/windows/include)
+    elseif(APPLE)
+        include_directories(${BREAKPAD_SRC_DIR}/third_party/mac/include)
+    elseif(UNIX)
+        include_directories(${BREAKPAD_SRC_DIR}/third_party/linux/include)
+    endif()
+
     set(LIBDISASM_DIR ${BREAKPAD_SRC_DIR}/third_party/libdisasm)
     set(LIBDISASM_SRCS
         ${LIBDISASM_DIR}/ia32_implicit.c
