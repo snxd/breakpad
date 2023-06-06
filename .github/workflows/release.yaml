@@ -1,5 +1,13 @@
 name: Release
-on: [push, workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        type: string
+env:
+  TERM: xterm-256color
 
 jobs:
   build:
@@ -42,6 +50,16 @@ jobs:
         CC: ${{ matrix.compiler }}
         CXX: ${{ matrix.cxx-compiler }}
 
+    - name: Upload artifacts (macOS/Linux)
+      uses: actions/upload-artifact@v3
+      if: runner.os != 'Windows'
+      with:
+        name: breakpad-utilities-${{ matrix.short-name }}
+        path: |
+          build/minidump*
+          build/dump_sym*
+        retention-days: 7
+
     - name: Upload artifacts (Windows)
       uses: actions/upload-artifact@v3
       if: runner.os == 'Windows'
@@ -53,36 +71,29 @@ jobs:
           build/MinSizeRel/msdia*
         retention-days: 7
 
-    - name: Upload artifacts (Linux)
-      uses: actions/upload-artifact@v3
-      if: runner.os != 'Windows'
-      with:
-        name: breakpad-utilities-${{ matrix.short-name }}
-        path: |
-          build/minidump*
-          build/dump_sym*
-        retention-days: 7
+  deploy:
+    name: Deploy Build - Ubuntu
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Package release (macOS/Linux)
-      shell: bash
-      if: runner.os != 'Windows'
-      run: 7z a -tzip ../breakpad-utilities-${{ matrix.short-name }}.zip minidump* dump_sym*
-      working-directory: build
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
 
-    - name: Package release (Windows)
-      if: runner.os == 'Windows'
-      shell: bash
-      run: 7z a -tzip ../../breakpad-utilities-${{ matrix.short-name }}.zip minidump*.exe dump_sym*.exe msdia*.dll
-      working-directory: build/MinSizeRel
+    - name: Package release assets
+      run: |
+        cd breakpad-utilities-lin64
+        7z a -tzip ../breakpad-utilities-lin64.zip *
+        cd ../breakpad-utilities-mac64
+        7z a -tzip ../breakpad-utilities-mac64.zip *
+        cd ../breakpad-utilities-win64
+        7z a -tzip ../breakpad-utilities-win64.zip *
+      working-directory:
 
-    - name: Upload release
-      uses: svenstaro/upload-release-action@v1-release
-      if: env.GITHUB_TOKEN != ''
-      with:
-        asset_name: breakpad-utilities-${{ matrix.short-name }}.zip
-        file: breakpad-utilities-${{ matrix.short-name }}.zip
-        tag: latest
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        overwrite: true
+    - name: Create GitHub release
+      run: |
+        gh release create ${{ github.event.inputs.version }} --generate-notes breakpad-utilities-*.zip
       env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GH_TOKEN: ${{ github.token }}
