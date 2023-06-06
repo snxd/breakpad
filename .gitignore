@@ -85,3 +85,6 @@ src/Makefile
 
 # Ignore compiled Python files.
 *.pyc
+
+# Ignore generated files.
+/build
