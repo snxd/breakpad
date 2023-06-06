@@ -796,7 +796,11 @@ bool MinidumpContext::Read(uint32_t expected_size) {
     // when only one of them will be used.
     switch (cpu_type) {
       case MD_CONTEXT_X86: {
-        if (expected_size != sizeof(MDRawContextX86)) {
+        //BZ: There is some sort of extended x86 context structure that is unknown
+        // to breakpad, but apparantly, it is 2739 bytes long.  Mapping the smaller
+        // structure on top seems to be fine, and fixes the issue with refusing to 
+        // process a stack trace w/o a valid context. (AIR-8)
+        if (expected_size < sizeof(MDRawContextX86)) {
           BPLOG(ERROR) << "MinidumpContext x86 size mismatch, " <<
             expected_size << " != " << sizeof(MDRawContextX86);
           return false;
