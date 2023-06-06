@@ -90,3 +90,6 @@ src/Makefile
 src/testing
 src/third_party/lss
 src/third_party/protobuf
+
+# Ignore generated files.
+/build
