@@ -364,6 +364,16 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/stackwalker_x86.h
         ${PROCESSOR_SRC_DIR}/tokenize.h)
 
+    if(WIN32)
+        include_directories(${BREAKPAD_SRC_DIR}/third_party/getopt)
+        include_directories(${BREAKPAD_SRC_DIR}/third_party/windows)
+        list(APPEND MINIDUMP_STACKWALK_SRCS
+            ${BREAKPAD_SRC_DIR}/third_party/getopt/getopt.c)
+        list(APPEND MINIDUMP_STACKWALK_HEADERS
+            ${BREAKPAD_SRC_DIR}/third_party/getopt/getopt.h
+            ${BREAKPAD_SRC_DIR}/third_party/windows/unistd.h)
+    endif()
+
     add_executable(minidump_stackwalk
         ${MINIDUMP_STACKWALK_SRCS} ${MINIDUMP_STACKWALK_HEADERS})
     breakpad_set_project_properties(minidump_stackwalk)
