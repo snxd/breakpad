@@ -90,7 +90,6 @@ jobs:
         7z a -tzip ../breakpad-utilities-mac64.zip *
         cd ../breakpad-utilities-win64
         7z a -tzip ../breakpad-utilities-win64.zip *
-      working-directory:
 
     - name: Create GitHub release
       run: |
