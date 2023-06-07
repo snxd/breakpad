@@ -433,6 +433,7 @@ if(BKPAD_MINIDUMP)
         ${PROCESSOR_SRC_DIR}/exploitability_win.cc
         ${PROCESSOR_SRC_DIR}/exploitability_linux.cc
         ${PROCESSOR_SRC_DIR}/logging.cc
+        ${PROCESSOR_SRC_DIR}/minidump.cc
         ${PROCESSOR_SRC_DIR}/minidump_processor.cc
         ${PROCESSOR_SRC_DIR}/pathname_stripper.cc
         ${PROCESSOR_SRC_DIR}/process_state.cc
