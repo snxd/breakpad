@@ -367,6 +367,8 @@ void CrashGenerationServer::HandleConnectedState() {
   assert(server_state_ == IPC_SERVER_STATE_CONNECTED);
 
   DWORD bytes_count = 0;
+  std::destroy_at(&msg_);
+  new (&msg_) decltype(msg_);
   memset(static_cast<void*>(&msg_), 0, sizeof(msg_));
   bool success = ReadFile(pipe_,
                           &msg_,

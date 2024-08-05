@@ -32,7 +32,7 @@
 #define CLIENT_MAC_GENERATOR_MINIDUMP_GENERATOR_H__
 
 #include <mach/mach.h>
-#include <TargetConditionals.h>
+#include <AvailabilityMacros.h>
 
 #include <string>
 
