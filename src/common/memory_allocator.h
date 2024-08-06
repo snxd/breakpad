@@ -85,7 +85,8 @@ class PageAllocator {
 
     if (current_page_ && page_size_ - page_offset_ >= bytes) {
       uint8_t* const ret = current_page_ + page_offset_;
-      page_offset_ += bytes;
+      // Keep page_offset_ aligned as the CPU natural word size.
+      page_offset_ += (bytes + sizeof(uintptr_t) - 1) & (~sizeof(uintptr_t) + 1);
       if (page_offset_ == page_size_) {
         page_offset_ = 0;
         current_page_ = nullptr;
