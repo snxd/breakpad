@@ -772,9 +772,11 @@ class MinidumpWriter {
     const std::vector<uint64_t> crash_exception_info =
         dumper_->crash_exception_info();
     stream->exception_record.number_parameters = crash_exception_info.size();
-    memcpy(stream->exception_record.exception_information,
-           crash_exception_info.data(),
-           sizeof(uint64_t) * crash_exception_info.size());
+    if (!crash_exception_info.empty()) {
+      memcpy(stream->exception_record.exception_information,
+             crash_exception_info.data(),
+             sizeof(uint64_t) * crash_exception_info.size());
+    }
     stream->thread_context = crashing_thread_context_;
 
     return true;
