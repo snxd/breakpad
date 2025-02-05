@@ -81,7 +81,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/uio.h>
-#include <TargetConditionals.h>
 #include <unistd.h>
 
 /* Stuff lifted from <a.out.h> and <sys/exec.h> since they are gone */
