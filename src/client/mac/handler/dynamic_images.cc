@@ -43,7 +43,6 @@ extern "C" { // needed to compile on Leopard
 #include <dlfcn.h>
 #include <mach/task_info.h>
 #include <sys/sysctl.h>
-#include <TargetConditionals.h>
 #include <unistd.h>
 
 #include <algorithm>
