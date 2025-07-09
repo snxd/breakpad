@@ -280,7 +280,12 @@ bool PrintPEFrameData(const wstring & pe_file, FILE * out_file)
         exception_rva,
         &img->LastRvaSection));
   for (DWORD i = 0; i < exception_size / sizeof(*funcs); i++) {
-    DWORD unwind_rva = funcs[i].UnwindInfoAddress;
+    DWORD unwind_rva;
+#if defined(_M_ARM64) || defined(__aarch64__)
+    unwind_rva = funcs[i].UnwindData;
+#else
+    unwind_rva = funcs[i].UnwindInfoAddress;
+#endif
     // handle chaining
     while (unwind_rva & 0x1) {
       unwind_rva ^= 0x1;
@@ -290,7 +295,11 @@ bool PrintPEFrameData(const wstring & pe_file, FILE * out_file)
             img->MappedAddress,
             unwind_rva,
             &img->LastRvaSection));
+#if defined(_M_ARM64) || defined(__aarch64__)
+      unwind_rva = chained_func->UnwindData;
+#else
       unwind_rva = chained_func->UnwindInfoAddress;
+#endif
     }
 
     UnwindInfo *unwind_info = static_cast<UnwindInfo*>(
@@ -358,22 +367,35 @@ bool PrintPEFrameData(const wstring & pe_file, FILE * out_file)
           reinterpret_cast<PIMAGE_RUNTIME_FUNCTION_ENTRY>(
           (unwind_info->unwind_code +
             ((unwind_info->count_of_codes + 1) & ~1)));
-
+#if defined(_M_ARM64) || defined(__aarch64__)
+        unwind_rva = chained_func->UnwindData;
+#else
+        unwind_rva = chained_func->UnwindInfoAddress;
+#endif
         unwind_info = static_cast<UnwindInfo*>(
           ImageRvaToVa(img->FileHeader,
             img->MappedAddress,
-            chained_func->UnwindInfoAddress,
+            unwind_rva,
             &img->LastRvaSection));
       }
       else {
         unwind_info = NULL;
       }
     } while (unwind_info);
+
+#if defined(_M_ARM64) || defined(__aarch64__)
+    DWORD begin_addr = funcs[i].BeginAddress;
+    DWORD code_size = funcs[i].FunctionLength * 4;
+#else
+    DWORD begin_addr = funcs[i].BeginAddress;
+    DWORD code_size = funcs[i].EndAddress - funcs[i].BeginAddress;
+#endif
     fprintf(out_file, "STACK CFI INIT %lx %lx .cfa: $rsp .ra: .cfa %lu - ^\n",
-      funcs[i].BeginAddress,
-      funcs[i].EndAddress - funcs[i].BeginAddress, rip_offset);
+      begin_addr,
+      code_size,
+      rip_offset);
     fprintf(out_file, "STACK CFI %lx .cfa: $rsp %lu +\n",
-      funcs[i].BeginAddress, stack_size);
+      begin_addr, stack_size);
   }
 
   return true;
