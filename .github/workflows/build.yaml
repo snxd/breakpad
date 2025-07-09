@@ -26,7 +26,7 @@ jobs:
             cmake-args: -D CMAKE_GENERATOR_PLATFORM=x64 -D CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
 
           - name: Build - Windows (ARM64)
-            runs-on: windows-latest
+            runs-on: windows-11-arm
             cmake-args: -D CMAKE_GENERATOR_PLATFORM=ARM64 -D CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
 
     steps:
