@@ -21,9 +21,13 @@ jobs:
             runs-on: macos-latest
             cmake-args: -G Xcode -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13
 
-          - name: Build - Windows
+          - name: Build - Windows (x64)
             runs-on: windows-latest
             cmake-args: -D CMAKE_GENERATOR_PLATFORM=x64 -D CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+
+          - name: Build - Windows (ARM64)
+            runs-on: windows-11-arm
+            cmake-args: -D CMAKE_GENERATOR_PLATFORM=ARM64 -D CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
 
     steps:
     - name: Setup environment
