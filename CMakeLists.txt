@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.21)
 
 include(FetchContent)
 include(CheckFunctionExists)
@@ -27,7 +27,9 @@ set(BREAKPADCOMMON_LIB_SRCS
     ${BREAKPAD_SRC_DIR}/common/path_helper.cc
     ${BREAKPAD_SRC_DIR}/common/path_helper.h
     ${BREAKPAD_SRC_DIR}/common/string_conversion.cc
-    ${BREAKPAD_SRC_DIR}/common/string_conversion.h)
+    ${BREAKPAD_SRC_DIR}/common/string_conversion.h
+    ${BREAKPAD_SRC_DIR}/common/test_assembler.cc
+    ${BREAKPAD_SRC_DIR}/common/test_assembler.h)
 
 set(BREAKPADCOMMON_UNITTESTS
     ${BREAKPAD_SRC_DIR}/common/test_assembler_unittest.cc)
