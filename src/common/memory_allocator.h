@@ -30,6 +30,7 @@
 #define GOOGLE_BREAKPAD_COMMON_MEMORY_ALLOCATOR_H_
 
 #include <assert.h>
+#include <cstddef>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
