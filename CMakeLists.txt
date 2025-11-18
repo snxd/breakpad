@@ -302,8 +302,12 @@ macro(breakpad_set_project_properties project)
             _CRT_SECURE_NO_WARNINGS)
     endif()
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        # Must use RTTI for dynamic_cast in case parent project sets -fno-rtti
-        target_compile_options(${project} PRIVATE -frtti)
+        # Must use RTTI for dynamic_cast in case parent project sets -fno-rtti or /GR-
+        if(NOT MSVC)
+            target_compile_options(${project} PRIVATE -frtti)
+        else()
+            target_compile_options(${project} PRIVATE /GR)
+        endif()
         # Silence casting warnings
         target_compile_options(${project} PRIVATE -Wno-c++11-narrowing)
     endif()
