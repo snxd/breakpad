@@ -98,7 +98,6 @@ if(WIN32)
     message(STATUS "DIA SDK library: ${DIA_SDK_140_DLL}")
 
     add_compile_definitions(_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-                            _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
                             UNICODE
                             _UNICODE)
 
@@ -125,14 +124,8 @@ if(WIN32)
     set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/windows)
 
     list(APPEND BREAKPAD_LIB_SRCS
-        ${CLIENT_SRC_DIR}/crash_generation/client_info.cc
-        ${CLIENT_SRC_DIR}/crash_generation/client_info.h
         ${CLIENT_SRC_DIR}/crash_generation/crash_generation_client.cc
         ${CLIENT_SRC_DIR}/crash_generation/crash_generation_client.h
-        ${CLIENT_SRC_DIR}/crash_generation/crash_generation_server.cc
-        ${CLIENT_SRC_DIR}/crash_generation/crash_generation_server.h
-        ${CLIENT_SRC_DIR}/crash_generation/minidump_generator.cc
-        ${CLIENT_SRC_DIR}/crash_generation/minidump_generator.h
         ${CLIENT_SRC_DIR}/handler/exception_handler.cc
         ${CLIENT_SRC_DIR}/handler/exception_handler.h)
 else()
