@@ -571,17 +571,15 @@ if(BKPAD_UNITTESTS)
         # Prevent overriding the parent project's compiler/linker settings for Windows
         set(gtest_force_shared_crt ON CACHE BOOL
             "Use shared (DLL) run-time lib even when Google Test is built as static lib." FORCE)
+        set(INSTALL_GTEST OFF CACHE BOOL
+            "Enable installation of googletest." FORCE)
 
         # Fetch Google test source code from official repository
         FetchContent_Declare(googletest
             GIT_REPOSITORY https://github.com/google/googletest.git
-            GIT_TAG v1.13.0)
+            GIT_TAG v1.17.0)
 
-        FetchContent_GetProperties(googletest)
-        if(NOT googletest_POPULATED)
-            FetchContent_Populate(googletest)
-            add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
-        endif()
+        FetchContent_MakeAvailable(googletest)
 
         add_library(GTest::GTest ALIAS gtest)
         add_library(GTest::Main ALIAS gtest_main)
