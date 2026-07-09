@@ -60,7 +60,7 @@ jobs:
         CXX: ${{ matrix.cxx-compiler }}
 
     - name: Upload artifacts (macOS/Linux)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       if: runner.os != 'Windows'
       with:
         name: breakpad-utilities-${{ matrix.short-name }}
@@ -70,7 +70,7 @@ jobs:
         retention-days: 7
 
     - name: Upload artifacts (Windows)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       if: runner.os == 'Windows'
       with:
         name: breakpad-utilities-${{ matrix.short-name }}
