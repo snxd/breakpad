@@ -35,7 +35,7 @@ jobs:
       run: git config --global core.autocrlf false
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
 
     - name: Install packages (Ubuntu)
       if: runner.os == 'Linux'
