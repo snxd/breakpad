@@ -89,7 +89,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v8
 
     - name: Package release assets
       run: |
